@@ -1,5 +1,5 @@
 import 'fixed-unittest.dart';
-import 'package:di/di.dart';
+// import 'package:di/di.dart';
 import 'dart:async';
 
 /*
@@ -29,7 +29,7 @@ class MockHttpBackend extends HttpBackend {
     return expectation;
   }
 
-  call(method, url) {
+  MockHttpPromise call(method, url) {
     // get the first expectaction and verify the
     // method and url.
     var expectation = expectations.removeAt(0);
@@ -37,44 +37,101 @@ class MockHttpBackend extends HttpBackend {
     assert (method == expectation.method &&
         url == expectation.url);
     print('MockHttpBackend: ${expectation.data}');
-    return expectation.data;
+    return new MockHttpPromise(new HttpResponse(expectation.data, 200));
   }
 }
 
-/*
+
+class HttpResponse {
+  int status;
+  String data;
+  Map<String, Object> headers;
+
+  HttpResponse(this.data, this.status, [this.headers]);
+}
+
 class HttpPromise {
-   Future future = new Future();
-   success(fn) {
-     future.then()
+   Completer successCompleter = new Completer<HttpResponse>();
+   success(fn(String, int)) {
+     successCompleter.future.then((resp) => fn(resp.data, resp.status));
+   }
+
+   then(fn) {
+     return successCompleter.future.then(fn);
    }
 }
-*/
+
+class MockHttpPromise extends HttpPromise {
+  MockHttpPromise(data) : super() {
+    successCompleter.complete(data);
+  }
+}
+
 
 
 class Http {
   HttpBackend backend;
   Http(HttpBackend this.backend);
 
-  call(String method, String url) =>
+  var responseInterceptors = new List<Function>();
+
+  HttpPromise call(String method, String url, [Map<String, Object> params]) =>
     backend.call(method, url);
 }
 
 
 
 main() {
+/*
   var injector = new Injector([
       (new Module())..value(HttpBackend, new MockHttpBackend())]);
+*/
 
 
   it('should do basic requests', () {
-    MockHttpBackend backend = injector.get(HttpBackend);
-    Http http = injector.get(Http);
+//    MockHttpBackend backend = injector.get(HttpBackend);
+//    Http http = injector.get(Http);
+
+    MockHttpBackend backend = new MockHttpBackend();
+    Http http = new Http(backend);
 
     backend.expect('GET', '/url').respond('DATA');
-    // bad example, shouldn't return a string.
-    expect(http.call('GET', '/url'), toEqual('DATA'));
 
-    //http.call('GET', '/url').success()
+    var successHandler = expectAsync2((String data, int status) {
+      expect(data, equals('DATA'));
+      expect(status, equals(200));
+    });
+
+    http.call('GET', '/url').success(successHandler);
+  });
+
+  it ('should allow access to the HttpResponse', () {
+    MockHttpBackend backend = new MockHttpBackend();
+    Http http = new Http(backend);
+
+    backend.expect('GET', '/url').respond('DATA');
+
+    var successHandler = expectAsync1((HttpResponse resp) {
+      expect(resp.data, equals('DATA'));
+      expect(resp.status, equals(200));
+    });
+
+    http.call('GET', '/url').then(successHandler);
+  });
+
+  xit('should support response interceptors', () {
+    MockHttpBackend backend = new MockHttpBackend();
+    Http http = new Http(backend);
+    http.responseInterceptors.add((resp) { resp.data = "!${resp.data}"; });
+
+    backend.expect('GET', '/url').respond('DATA');
+
+    var successHandler = expectAsync1((HttpResponse resp) {
+      expect(resp.data, equals('!DATA'));
+      expect(resp.status, equals(200));
+    });
+
+    http.call('GET', '/url').then(successHandler);
   });
 
 

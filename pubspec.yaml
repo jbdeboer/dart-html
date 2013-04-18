@@ -4,5 +4,5 @@ dependencies:
   browser: 0.4.2
   unittest: any
   js: any
-  di: any
+#  di: any
 #    git: git://github.com/vojtajina/dart-di.git
