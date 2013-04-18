@@ -3,6 +3,6 @@ version: 0.0.1
 dependencies:
   browser: 0.4.2
   unittest: 0.4.2 
-  js: any
+  js: 0.0.19
   di:
    git: git://github.com/vojtajina/dart-di.git

@@ -1,6 +1,45 @@
 import 'fixed-unittest.dart';
-import 'package:di/di.dart';
+// import 'package:di/di.dart';
 import 'dart:async';
+import 'dart:collection';
+import '../lib/src/ngrepeat.dart';
+
+/*
+
+var ngShowDirective = ngDirective(function(scope, element, attr){
+  scope.$watch(attr.ngShow, function ngShowWatchAction(value){
+    element.css('display', toBoolean(value) ? '' : 'none');
+  });
+});
+*/
+
+class MockHtmlElement {
+//  var cssAttrs = new Map();
+//  css(String attr, String value) {
+//    cssAttrs[attr] = value;
+//  }
+  bool hidden = false;  // by default
+}
+
+class Scope extends HashMap {
+  var handlers = new Map();
+  $watch(String expr, handler) {
+    handlers[expr] = handler;
+
+  }
+
+  $apply() {
+    handlers.forEach((expr, handler) {
+      if (expr == 'false') { handler(false); }
+      else { handler(this[expr]); }
+    });
+  }
+}
+
+
+
+
+
 
 
 class NgRepeatDirective {
@@ -42,5 +81,28 @@ main() {
 
      expect(scope[r"$count"], equals(2));
 
+  });
+
+  it('should hide an element', () {
+    var scope = new Scope();
+    var ngShow = new NgShowDirective();
+    var element = new MockHtmlElement();
+    ngShow.link(scope, element, {'ngShow': 'false'});
+
+    scope.$apply();
+    expect(element.hidden, equals(true));
+  });
+
+  it('should hide an element and then show it.', () {
+    var scope = new Scope();
+    scope["a"] = false;
+    var ngShow = new NgShowDirective();
+    var element = new MockHtmlElement();
+    ngShow.link(scope, element, {'ngShow': 'a'});
+    scope.$apply();
+
+    expect(element.hidden, equals(true));
+    scope["a"] = true;
+    scope.$apply();
   });
 }
