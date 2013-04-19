@@ -1,23 +1,10 @@
 import 'fixed-unittest.dart';
-// import 'package:di/di.dart';
 import 'dart:async';
 import 'dart:collection';
-import '../lib/src/ngrepeat.dart';
+import '../lib/src/ngshow.dart';
 
-/*
-
-var ngShowDirective = ngDirective(function(scope, element, attr){
-  scope.$watch(attr.ngShow, function ngShowWatchAction(value){
-    element.css('display', toBoolean(value) ? '' : 'none');
-  });
-});
-*/
 
 class MockHtmlElement {
-//  var cssAttrs = new Map();
-//  css(String attr, String value) {
-//    cssAttrs[attr] = value;
-//  }
   bool hidden = false;  // by default
 }
 
@@ -73,6 +60,8 @@ main() {
 //      (new Module())..value(HttpBackend, new MockHttpBackend())]);
 //
 
+
+  // old ng-repeat test.
   it('should publish \$count', () {
      var scope = new Map();
      var ngRepeat = new NgRepeatDirective();
@@ -83,6 +72,7 @@ main() {
 
   });
 
+  // ng-show tests
   it('should hide an element', () {
     var scope = new Scope();
     var ngShow = new NgShowDirective();

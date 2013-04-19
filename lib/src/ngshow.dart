@@ -11,13 +11,3 @@ class NgShowDirective {
     }));
   }
 }
-/*NgShowFunction(scope, jquery, attr, [fourth]) {
-    var element = jquery[0];
-    scope.$watch(attr["ngDartShow"], new js.Callback.many((value, [something, thing2, thing3]) {
-      print('Element: $element');
-      element.hidden = !value;
-//element.css('display', value ? '' : 'none');
-    }));
-  }*/
-
-

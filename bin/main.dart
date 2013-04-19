@@ -1,6 +1,6 @@
 import 'package:js/js.dart' as js;
 import 'dart:html';
-import '../lib/src/ngrepeat.dart';
+import '../lib/src/ngshow.dart';
 
 main() {
  js.scoped(() {
