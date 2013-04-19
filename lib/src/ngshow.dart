@@ -1,5 +1,6 @@
 library ngrepeat;
 
+// NOTE: deboer.  Using js means that the unittests don't run.  Ugh.
 import 'package:js/js.dart' as js;
 
 class NgShowDirective {

@@ -11,12 +11,15 @@ class MockHtmlElement {
 class Scope extends HashMap {
   var handlers = new Map();
   $watch(String expr, handler) {
+    assert(expr != null);
+    print('watching: $expr');
     handlers[expr] = handler;
 
   }
 
   $apply() {
     handlers.forEach((expr, handler) {
+      print('\$appy: $expr');
       if (expr == 'false') { handler(false); }
       else { handler(this[expr]); }
     });
@@ -77,7 +80,7 @@ main() {
     var scope = new Scope();
     var ngShow = new NgShowDirective();
     var element = new MockHtmlElement();
-    ngShow.link(scope, element, {'ngShow': 'false'});
+    ngShow.link(scope, [element], {'ngDartShow': 'false'});
 
     scope.$apply();
     expect(element.hidden, equals(true));
@@ -88,11 +91,13 @@ main() {
     scope["a"] = false;
     var ngShow = new NgShowDirective();
     var element = new MockHtmlElement();
-    ngShow.link(scope, element, {'ngShow': 'a'});
+    ngShow.link(scope, [element], {'ngDartShow': 'a'});
     scope.$apply();
 
     expect(element.hidden, equals(true));
     scope["a"] = true;
     scope.$apply();
+    expect(element.hidden, equals(false));
+
   });
 }
