@@ -95,7 +95,7 @@ main() {
 
   var injector = new Injector([
       (new Module())..value(HttpBackend, new MockHttpBackend())]);
-*/
+
 
 
   it('should do basic requests', () {

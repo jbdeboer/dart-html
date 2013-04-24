@@ -1,8 +1,8 @@
 name: dart-http
 version: 0.0.1
 dependencies:
-  browser: 0.4.2
-  unittest: 0.4.2 
-  js: 0.0.19
+  browser: any
+  unittest: any
+  js: any
   di:
-   git: git://github.com/vojtajina/dart-di.git
+   git: git://github.com/jbdeboer/dart-di.git

@@ -2,6 +2,8 @@ import 'fixed-unittest.dart';
 import 'dart:async';
 import 'dart:collection';
 import '../lib/src/ngshow.dart';
+import 'package:js/js.dart' as js;
+
 
 
 class MockHtmlElement {
@@ -18,19 +20,13 @@ class Scope extends HashMap {
   }
 
   $apply() {
-    handlers.forEach((expr, handler) {
+    handlers.forEach((expr, js.Callback handler) {
       print('\$appy: $expr');
-      if (expr == 'false') { handler(false); }
-      else { handler(this[expr]); }
+      if (expr == 'false') { handler.callback([this, false]); }
+      else { handler.callback([this, this[expr]]); }
     });
   }
 }
-
-
-
-
-
-
 
 class NgRepeatDirective {
   link(Map scope, element, attr) {
@@ -62,6 +58,12 @@ main() {
 //  var injector = new Injector([
 //      (new Module())..value(HttpBackend, new MockHttpBackend())]);
 //
+
+  it('Function.apply works with closures', () {
+    var called = false;
+    Function.apply((x, [y]) { called = true;}, [2]);
+    expect(called, equals(true));
+  });
 
 
   // old ng-repeat test.

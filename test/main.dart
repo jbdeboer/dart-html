@@ -52,7 +52,9 @@ class CircularB {
 }
 
 // pretend, you don't see this main method
-void main() {
+void main() { }
+
+void xmain() {
   
 it('should instantiate a type', () {
   var injector = new Injector();
